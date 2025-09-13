@@ -661,4 +661,47 @@ footer {
         font-size: 1rem;
         padding: 10px 20px;
     }
+    /* Estilos para el botón "Agregar al carrito" */
+.add-to-cart-btn {
+    background-color: var(--link-color);
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 700;
+    margin: 15px auto; /* Centrar el botón */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-to-cart-btn:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+/* Estilos para el ícono del carrito */
+.cart-icon-container {
+    position: relative;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+.cart-icon-container:hover {
+    color: var(--link-color);
+}
+
+#cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 2px 6px;
+    line-height: 1;
+}
 }
