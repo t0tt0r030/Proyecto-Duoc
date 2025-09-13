@@ -15,8 +15,8 @@
     --spacing-xl: 40px;
 
     /* Light Mode */
-    --bg-color: #ffffff;
-    --bg-secondary-color: #fef9fb;
+    --bg-color: #FFF5E1;
+    --bg-secondary-color: #FFC0CB;
     --card-bg-color: #ffffff;
     --text-color: #333333;
     --text-color-light: #666666;
@@ -222,7 +222,7 @@ body.dark-mode .theme-switcher .fa-moon { transform: scale(1); opacity: 1; }
 
 .cta-button {
     background-color: var(--primary-color);
-    color: #fff;
+    color: #8B4513;
     padding: 15px 30px;
     text-decoration: none;
     border-radius: 50px;
