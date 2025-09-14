@@ -3,7 +3,7 @@
     --primary-color: #eb86a8;   
     --secondary-color: #d4b3e0; 
     --accent-color: #fbcd78;   
-    --link-color: #8bd1d5;     
+    --link-color: #e3bae0;     
     --font-heading: 'Pacifico', cursive;
     --font-body: 'Roboto', sans-serif;
 
@@ -759,6 +759,8 @@ footer {
     opacity: 1;
     transform: translateY(0);
 }
+
+
 
 /* --- Animación Hero --- */
 @keyframes reveal-up {

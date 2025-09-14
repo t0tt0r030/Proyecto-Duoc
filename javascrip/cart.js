@@ -1,194 +1,204 @@
 // Data simulada de productos
 const products = [
-    { id: 1, name: 'Pastel de Chocolate', price: 25000 },
-    { id: 2, name: 'Pastel Doble Chocolate', price: 22000 },
-    { id: 3, name: 'Pastel Frutos Rojos', price: 28000 },
+  { id: 1, name: 'Pastel de Chocolate', price: 25000 },
+  { id: 2, name: 'Pastel Doble Chocolate', price: 22000 },
+  { id: 3, name: 'Pastel Frutos Rojos', price: 28000 },
 ];
 
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-document.addEventListener("DOMContentLoaded", () => {
-  // espera a que se carguen los includes
+// ----------------- Helpers -----------------
+function waitForElements(ids, cb) {
+  const missing = ids.filter(id => !document.getElementById(id));
+  if (missing.length === 0) { cb(); return; }
   const observer = new MutationObserver(() => {
-    if (document.getElementById("cart-modal")) {
-      initCartListeners(); // ahora sí engancha
-      renderCartCount();
+    const stillMissing = ids.filter(id => !document.getElementById(id));
+    if (stillMissing.length === 0) {
       observer.disconnect();
+      cb();
     }
   });
-
   observer.observe(document.body, { childList: true, subtree: true });
-});
+}
 
 function saveCart() {
-    localStorage.setItem('cart', JSON.stringify(cart));
+  localStorage.setItem('cart', JSON.stringify(cart));
 }
 
 function renderCartCount() {
-    const cartCountEl = document.getElementById('cart-count');
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    cartCountEl.textContent = totalItems;
+  const cartCountEl = document.getElementById('cart-count');
+  if (!cartCountEl) return;
+  const totalItems = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+  cartCountEl.textContent = totalItems;
 }
 
+// ----------------- Operaciones del carrito -----------------
 function addToCart(productId) {
-    const product = products.find(p => p.id == productId);
-    if (!product) return;
+  const id = Number(productId);
+  const product = products.find(p => p.id === id);
+  if (!product) return;
 
-    const existingItem = cart.find(item => item.id === product.id);
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({ ...product, quantity: 1 });
-    }
-    saveCart();
-    renderCartCount();
-    renderCartModal();
+  const existingItem = cart.find(item => Number(item.id) === id);
+  if (existingItem) {
+    existingItem.quantity = Number(existingItem.quantity || 0) + 1;
+  } else {
+    cart.push({ ...product, quantity: 1 });
+  }
+  saveCart();
+  renderCartCount();
+  renderCartModal();
 }
 
 function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    saveCart();
-    renderCartCount();
-    renderCartModal();
+  const id = Number(productId);
+  cart = cart.filter(item => Number(item.id) !== id);
+  saveCart();
+  renderCartCount();
+  renderCartModal();
 }
 
 function updateQuantity(productId, newQuantity) {
-    const item = cart.find(item => item.id === productId);
-    if (item) {
-        if (newQuantity <= 0) {
-            removeFromCart(productId);
-        } else {
-            item.quantity = newQuantity;
-            saveCart();
-            renderCartModal();
-        }
-    }
+  const id = Number(productId);
+  const q = Number(newQuantity) || 0;
+  const item = cart.find(i => Number(i.id) === id);
+  if (!item) return;
+  if (q <= 0) {
+    removeFromCart(id);
+  } else {
+    item.quantity = q;
+    saveCart();
+    renderCartCount();
+    renderCartModal();
+  }
 }
 
-// javascrip/cart.js (modificaciones destacadas)
-
-// ... (el resto del código: products, cart, saveCart, renderCartCount, etc. se mantiene igual) ...
-
-// Escucha los eventos de login/logout para refrescar el carrito
-window.addEventListener('userLoggedIn', renderCartModal);
-window.addEventListener('userLoggedOut', renderCartModal);
-
-
+// ----------------- Render del modal -----------------
 function renderCartModal() {
-    const cartModal = document.getElementById('cart-modal');
-    if (!cartModal) return;
+  const cartModal = document.getElementById('cart-modal');
+  if (!cartModal) return;
 
-    const cartItemsList = cartModal.querySelector('.cart-items');
-    const subtotalEl = cartModal.querySelector('.subtotal-price');
-    const totalEl = cartModal.querySelector('.total-price');
-    const discountLine = cartModal.querySelector('.discount-line');
-    const discountAmountEl = cartModal.querySelector('.discount-amount');
-    const discountDescEl = cartModal.querySelector('.discount-description');
+  const cartItemsList = cartModal.querySelector('.cart-items');
+  const cartTotalEl = cartModal.querySelector('.total-price');
 
-    if (!cartItemsList || !totalEl) return;
+  if (!cartItemsList || !cartTotalEl) return;
 
-    cartItemsList.innerHTML = '';
-    let subtotal = 0;
+  cartItemsList.innerHTML = '';
+  let total = 0;
 
-    if (cart.length === 0) {
-        cartItemsList.innerHTML = '<p>Tu carrito está vacío.</p>';
-        subtotalEl.textContent = '$0';
-        totalEl.textContent = '$0';
-        discountLine.style.display = 'none';
-    } else {
-        cart.forEach(item => {
-            const itemElement = document.createElement('li');
-            itemElement.classList.add('cart-item');
-            itemElement.innerHTML = `
-                <div class="cart-item-info">
-                    <h4>${item.name}</h4>
-                    <p>$${item.price.toLocaleString('es-CL')} x ${item.quantity}</p>
-                </div>
-                <div class="cart-item-actions">
-                    <input type="number" name="quantity-input" min="1" value="${item.quantity}" data-id="${item.id}">
-                    <button class="remove-btn" data-id="${item.id}">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `;
-            cartItemsList.appendChild(itemElement);
-            subtotal += item.price * item.quantity;
-        });
+  if (!Array.isArray(cart) || cart.length === 0) {
+    cartItemsList.innerHTML = '<p>Tu carrito está vacío.</p>';
+    cartTotalEl.textContent = '$0';
+    return;
+  }
 
-        subtotalEl.textContent = `$${subtotal.toLocaleString('es-CL')}`;
+  cart.forEach(item => {
+    const price = Number(item.price) || 0;
+    const qty = Number(item.quantity) || 0;
+    const itemTotal = price * qty;
+    total += itemTotal;
 
-        // --- LÓGICA DE DESCUENTO ---
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        let finalTotal = subtotal;
-        let discountApplied = 0;
+    const itemElement = document.createElement('li');
+    itemElement.classList.add('cart-item');
+    itemElement.innerHTML = `
+      <div class="cart-item-info">
+        <h4>${item.name}</h4>
+        <p>$${price.toLocaleString('es-CL')} x ${qty} = $${itemTotal.toLocaleString('es-CL')}</p>
+      </div>
+      <div class="cart-item-actions">
+        <input type="number" name="quantity-input" min="1" value="${qty}" data-id="${item.id}">
+        <button class="remove-btn" data-id="${item.id}" aria-label="Eliminar">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `;
+    cartItemsList.appendChild(itemElement);
+  });
 
-        if (user && user.discount && cart.length > 0) {
-            const discount = user.discount;
-            discountLine.style.display = 'block';
-            discountDescEl.textContent = discount.description;
-
-            if (discount.type === 'percentage') {
-                discountApplied = subtotal * discount.value;
-                finalTotal = subtotal - discountApplied;
-                discountAmountEl.textContent = `- $${discountApplied.toLocaleString('es-CL')}`;
-            } 
-            else if (discount.type === 'birthday') {
-                // Regala el producto más caro del carrito
-                const mostExpensiveItem = cart.reduce((max, item) => item.price > max.price ? item : max, cart[0]);
-                discountApplied = mostExpensiveItem.price;
-                finalTotal = subtotal - discountApplied;
-                discountAmountEl.textContent = `- $${discountApplied.toLocaleString('es-CL')}`;
-            }
-
-        } else {
-            discountLine.style.display = 'none';
-        }
-
-        totalEl.textContent = `$${Math.max(0, finalTotal).toLocaleString('es-CL')}`;
+  // Aplicar descuento (si el usuario logueado tiene uno)
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  let discountMsg = '';
+  if (user && user.discount) {
+    const d = user.discount;
+    if (d.type === 'percentage' && typeof d.value === 'number') {
+      const discountAmount = total * d.value;
+      total = total - discountAmount;
+      discountMsg = ` (Descuento: ${Math.round(d.value * 100)}%)`;
+    } else if (d.type === 'birthday') {
+      discountMsg = ` (${d.description || 'Torta gratis'})`;
+      total = 0;
     }
+  }
+
+  cartTotalEl.textContent = `$${total.toLocaleString('es-CL')}${discountMsg}`;
 }
 
-
+// ----------------- Listeners e inicialización -----------------
 function initCartListeners() {
-    const cartIcon = document.getElementById('cart-icon-container');
-    const cartModal = document.getElementById('cart-modal');
-    const closeBtn = document.getElementById('close-cart-btn');
 
-    if (!cartIcon || !cartModal || !closeBtn) return;
-        
 
-    cartIcon.addEventListener('click', () => {
-        cartModal.classList.add('show');
-        renderCartModal();
-    });
+  const cartIcon = document.getElementById('cart-icon-container');
+  const cartModal = document.getElementById('cart-modal');
+  const closeBtn = document.getElementById('close-cart-btn');
 
-    closeBtn.addEventListener('click', () => {
-        cartModal.classList.remove('show');
-    });
+  if (initCartListeners.hasRun) return;
+    initCartListeners.hasRun = true;
 
-    cartModal.addEventListener('click', (e) => {
-        if (e.target === cartModal) {
-            cartModal.classList.remove('show');
-        }
-    });
 
-    document.addEventListener('change', (e) => {
-        if (e.target.matches('.cart-item-actions input')) {
-            const id = parseInt(e.target.dataset.id);
-            const quantity = parseInt(e.target.value);
-            updateQuantity(id, quantity);
-        }
-    });
+  if (!cartIcon || !cartModal || !closeBtn) {
+    console.error("Cart elements not found! Check your IDs in the HTML.");
+    return;
+  }
 
-    document.addEventListener('click', (e) => {
-        if (e.target.matches('.add-to-cart-btn')) {
-            const id = parseInt(e.target.dataset.id);
-            addToCart(id);
-        }
-        if (e.target.closest('.remove-btn')) {
-            const id = parseInt(e.target.closest('.remove-btn').dataset.id);
-            removeFromCart(id);
-        }
-    });
+  cartIcon.addEventListener('click', () => {
+    renderCartModal();
+    cartModal.classList.add('show');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    cartModal.classList.remove('show');
+  });
+
+  cartModal.addEventListener('click', (e) => {
+    if (e.target === cartModal) cartModal.classList.remove('show');
+  });
+
+  // Delegación: inputs de cantidad
+  document.addEventListener('change', (e) => {
+    if (e.target && e.target.matches('input[name="quantity-input"]')) {
+      const id = Number(e.target.dataset.id);
+      const quantity = Number(e.target.value);
+      updateQuantity(id, quantity);
+    }
+  });
+
+  // Delegación: botones add / remove
+  document.addEventListener('click', (e) => {
+    const addBtn = e.target.closest('.add-to-cart-btn');
+    if (addBtn) {
+      const id = Number(addBtn.dataset.id);
+      addToCart(id);
+      return;
+    }
+    const rem = e.target.closest('.remove-btn');
+    if (rem) {
+      const id = Number(rem.dataset.id);
+      removeFromCart(id);
+    }
+  });
+
+  // Re-render cuando el usuario loguea/desloguea (porque el descuento puede cambiar)
+  window.addEventListener('userLoggedIn', () => { renderCartCount(); renderCartModal(); });
+  window.addEventListener('userLoggedOut', () => { renderCartCount(); renderCartModal(); });
 }
 
+
+
+
+// Wait until HTML partials are injected (si usas partials)
+document.addEventListener('DOMContentLoaded', () => {
+  waitForElements(['cart-icon-container', 'cart-modal', 'cart-count'], () => {
+    renderCartCount();
+    initCartListeners();
+    renderCartModal();
+  });
+});

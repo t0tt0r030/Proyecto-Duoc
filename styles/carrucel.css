@@ -86,9 +86,9 @@
     display: inline-block;
     padding: 10px 16px;
     border-radius: 999px;
-    background: #3a86ff;
+    background: #eb86a8;
     color: #fff; text-decoration: none; font-weight: 700;
-    box-shadow: 0 6px 18px rgba(58,134,255,.35);
+    box-shadow: 0 6px 18px rgba(151, 73, 146, 0.35);
   }
   .cta-button.cta-highlight { background: #e83e8c; }
   

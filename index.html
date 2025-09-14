@@ -14,6 +14,8 @@
   <link rel="stylesheet" href="styles/style.css">
   <!-- Estilos del carrucel -->
   <link rel="stylesheet" href="styles/carrucel.css">
+  <!-- Estilos del autenticadorr -->
+  <link rel="stylesheet" href="styles/auth.css">
 
   <!-- Font Awesome (carga asíncrona para no bloquear) -->
   <link rel="preload"
@@ -44,18 +46,23 @@
           <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
           <li><a href="#faq">Preguntas</a></li>
           <li><a href="#contacto">Contacto</a></li>
-          
+        
+
         </ul>
 
         <div class="nav-controls">
-          <div id="auth-actions" class="auth-actions">
-              <button id="login-btn" class="auth-button">Iniciar Sesión</button>
-              <button id="register-btn" class="auth-button cta">Registrarse</button>
+
+          <!-- Botones -->
+          <div id="auth-actions">
+            <a href="#" id="btn-login" class="cta-button">Login</a>
+            <a href="#" id="btn-register" class="cta-button">Registro</a>
           </div>
-          <div id="user-state" class="user-state" style="display: none;">
-              <span id="user-name"></span>
-              <button id="logout-btn" class="auth-button">Cerrar Sesión</button>
+
+          <div id="user-state" style="display:none;">
+            <span id="user-name"></span>
+            <button id="logout-btn" class="cta-button">Salir</button>
           </div>
+
           <div class="theme-switcher" aria-label="Cambiar tema" role="button" tabindex="0">
             <i class="fas fa-sun" aria-hidden="true"></i>
             <i class="fas fa-moon" aria-hidden="true"></i>
@@ -86,6 +93,54 @@
 
     <div data-include="partials/contacto.html"></div>
 
+    <!-- Modales de autenticación -->
+     <!-- Modal Login -->
+      <div id="login-modal" class="auth-modal">
+        <div class="auth-content">
+          <button class="close-btn">&times;</button>
+          <h3>Login</h3>
+          <p class="auth-subtext">Ingresa tus datos</p>
+          <form id="login-form">
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input type="email" id="login-email" required>
+            </div>
+            <div class="form-group">
+              <label for="login-pass">Contraseña</label>
+              <input type="password" id="login-pass" required>
+            </div>
+            <button type="submit" class="cta-button full-width">Entrar</button>
+            <p class="error-message"></p>
+          </form>
+          <p class="switch-auth">¿No tienes cuenta? <a href="#" id="open-register">Regístrate</a></p>
+        </div>
+      </div>
+
+      <!-- Modal Registro -->
+      <div id="register-modal" class="auth-modal">
+        <div class="auth-content">
+          <button class="close-btn">&times;</button>
+          <h3>Registro</h3>
+          <p class="auth-subtext">Crea tu cuenta</p>
+          <form id="register-form">
+            <div class="form-group">
+              <label for="reg-email">Email</label>
+              <input type="email" id="reg-email" required>
+            </div>
+            <div class="form-group">
+              <label for="reg-pass">Contraseña</label>
+              <input type="password" id="reg-pass" required>
+            </div>
+            <button type="submit" class="cta-button full-width">Registrar</button>
+            <p class="error-message"></p>
+          </form>
+          <p class="switch-auth">¿Ya tienes cuenta? <a href="#" id="open-login">Login</a></p>
+        </div>
+      </div>
+
+
+
+    <!-- Modales de carrito -->
     <div id="cart-modal" class="cart-modal">
     <div class="cart-content">
         <button id="close-cart-btn" class="close-btn">&times;</button>
@@ -98,9 +153,6 @@
     </div>
   </div>
 
-    <div data-include="partials/login-modal.html"></div>
-
-    <div data-include="partials/registro-modal.html"></div>
 
 </main>
 

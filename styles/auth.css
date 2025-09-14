@@ -8,6 +8,7 @@
     margin-right: 15px;
 }
 
+
 .auth-button {
     background: transparent;
     border: 1px solid var(--accent-color);
@@ -38,7 +39,7 @@
 /* --- Estilos para los Modales --- */
 .auth-modal {
     position: fixed;
-    z-index: 1001; /* Encima del overlay */
+    z-index: 1001;
     left: 0;
     top: 0;
     width: 100%;
@@ -47,14 +48,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 0;
-    visibility: hidden;
+    opacity: 0;            /* invisible */
+    visibility: hidden;    /* invisible */
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .auth-modal.show {
-    opacity: 1;
-    visibility: visible;
+    opacity: 1;            /* visible */
+    visibility: visible;   /* visible */
 }
 
 .auth-content {

@@ -29,11 +29,7 @@ async function includePartials() {
     document.head.appendChild(style);
   }
   
-  // ==============================
-  // TUS FUNCIONES (no cambian lógica)
-  // ==============================
-  
-  // Smooth scroll en anchors con offset de navbar
+
   function initAnchorsSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
@@ -64,7 +60,7 @@ async function includePartials() {
     });
   }
   
-  // FAQ Accordion
+  // Acordeón 
   function initFAQAccordion() {
     const faqItems = document.querySelectorAll('.faq-item');
     faqItems.forEach(item => {
@@ -80,7 +76,7 @@ async function includePartials() {
     });
   }
   
-  // Mobile Navigation (Hamburger Menu)
+  // Hamburger Menu
   function initMobileNav() {
     const hamburger = document.querySelector('.hamburger-menu');
     const navLinks = document.querySelector('.nav-links');
@@ -92,7 +88,7 @@ async function includePartials() {
       body.classList.toggle('no-scroll');
     });
   
-    // Close menu when a link is clicked
+    // Cierra menú
     document.querySelectorAll('.nav-links a').forEach(link => {
       link.addEventListener('click', () => {
         if (navLinks.classList.contains('active')) {
@@ -102,8 +98,7 @@ async function includePartials() {
       });
     });
   }
-  
-  // Scroll-based UI Changes (back-to-top, navbar shrink, scrollspy)
+ 
   function initScrollUI() {
     const backToTopButton = document.querySelector('.back-to-top-btn');
     const navbar = document.querySelector('.navbar');
@@ -125,7 +120,7 @@ async function includePartials() {
         else navbar.classList.remove('navbar-scrolled');
       }
   
-      // Scrollspy
+     
       let currentSectionId = '';
       const navHeight = navbar ? navbar.offsetHeight : 0;
   
@@ -145,7 +140,7 @@ async function includePartials() {
     });
   }
   
-  // Scroll Animations (IntersectionObserver)
+  
   function initScrollAnimations() {
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach((entry) => {
@@ -161,7 +156,7 @@ async function includePartials() {
     document.querySelectorAll('.animate-on-scroll').forEach((el) => observer.observe(el));
   }
   
-  // Dark Mode Toggle
+ 
   function initThemeToggle() {
     const themeSwitcher = document.querySelector('.theme-switcher');
     const bodyEl = document.querySelector('body');
